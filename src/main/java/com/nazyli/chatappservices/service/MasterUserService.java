@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -67,5 +68,9 @@ public class MasterUserService {
 
     public List<MasterUser> findAll() {
         return masterUserRepository.findAll();
+    }
+
+    public Optional<MasterUser> findByUsername(String username) {
+        return masterUserRepository.findByUsername(username);
     }
 }

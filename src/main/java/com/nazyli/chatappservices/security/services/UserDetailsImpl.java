@@ -28,9 +28,11 @@ public class UserDetailsImpl implements UserDetails {
 
     private boolean active;
 
+    private String pictureUrl;
+
     private Collection<? extends GrantedAuthority> authorities;
 
-    public UserDetailsImpl(String userId, String username, String email, String password, String roleName, boolean active,
+    public UserDetailsImpl(String userId, String username, String email, String password, String roleName, boolean active, String pictureUrl,
                            Collection<? extends GrantedAuthority> authorities) {
         this.userId = userId;
         this.username = username;
@@ -39,6 +41,7 @@ public class UserDetailsImpl implements UserDetails {
         this.authorities = authorities;
         this.roleName = roleName;
         this.active = active;
+        this.pictureUrl = pictureUrl;
     }
 
     public static UserDetailsImpl build(MasterUser user) {
@@ -57,6 +60,7 @@ public class UserDetailsImpl implements UserDetails {
                 user.getPassword(),
                 user.getRoleName(),
                 user.isActive(),
+                user.getPictureUrl(),
                 authorities);
     }
 
