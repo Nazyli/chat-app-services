@@ -1,5 +1,6 @@
 package com.nazyli.chatappservices.entity;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
@@ -13,8 +14,22 @@ import java.util.Date;
 @Entity
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "master_user")
 public class MasterUser {
+
+    public MasterUser(MasterUser user) {
+        this.userId = user.userId;
+        this.username = user.username;
+        this.password = user.password;
+        this.email = user.email;
+        this.createdDate = user.getCreatedDate();
+        this.modifiedDate = user.getModifiedDate();
+        this.active = user.active;
+        this.pictureUrl = user.getPictureUrl();
+        this.roleName = user.roleName;
+    }
+
     @Id
     @Column(name = "userId")
     @GeneratedValue(generator = "uuid")

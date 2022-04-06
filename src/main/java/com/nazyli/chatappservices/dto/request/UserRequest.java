@@ -1,4 +1,4 @@
-package com.nazyli.chatappservices.dto;
+package com.nazyli.chatappservices.dto.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
