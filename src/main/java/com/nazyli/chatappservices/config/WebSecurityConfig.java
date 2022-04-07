@@ -1,4 +1,4 @@
-package com.nazyli.chatappservices.security;
+package com.nazyli.chatappservices.config;
 
 import com.nazyli.chatappservices.security.jwt.AuthEntryPointJwt;
 import com.nazyli.chatappservices.security.jwt.AuthTokenFilter;
@@ -19,7 +19,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import org.springframework.web.filter.CorsFilter;
 
 import java.util.Arrays;
 
