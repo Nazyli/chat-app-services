@@ -62,6 +62,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         return new BCryptPasswordEncoder();
     }
 
+//    @Override
+//    public void configure(WebSecurity web) throws Exception {
+//
+//        // Tell Spring to ignore securing the handshake endpoint. This allows the handshake to take place unauthenticated
+//        web.ignoring().antMatchers("/ws/**");
+//
+//    }
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable()
@@ -78,21 +86,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 //         disable page caching
         http.headers().cacheControl();
-
-//        http.csrf().disable()
-//                // don't create session
-//                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
-//                .authorizeRequests()
-//                .antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-//                .antMatchers("/auth/**").permitAll()
-//                .antMatchers("/ws/**").permitAll()
-//
-//                .anyRequest().authenticated()
-//                .and()
-//                .addFilterBefore(corsFilter, ChannelProcessingFilter.class)
-//                .addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
-//        // disable page caching
-//        http.headers().cacheControl();
     }
 
 //    @Override
