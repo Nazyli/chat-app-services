@@ -15,9 +15,19 @@ public class MasterUserController {
     @Autowired
     private MasterUserService service;
 
+    @GetMapping("/findAllUser")
+    public ResponseEntity<?> findAllUser(
+            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return ResponseEntity.ok(service
+                .findAll()
+                .stream()
+                .filter(user -> !user.getUserName().equals(userDetails.getUsername()))
+                .map(UserSummary::new));
+    }
 
-    @GetMapping("/summaries")
-    public ResponseEntity<?> findAllUserSummaries(
+
+    @GetMapping("/findAllConversation")
+    public ResponseEntity<?> findAllConversation(
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return ResponseEntity.ok(service
                 .findAll()
@@ -36,12 +46,4 @@ public class MasterUserController {
                 .pictureUrl(userDetails.getPictureUrl())
                 .build();
     }
-
-
-//    @GetMapping("/summaries/{username}")
-//    public ResponseEntity<?> getUserSummary(@PathVariable String username) {
-//        return service.findByUsername(username)
-//                .map(user -> ResponseEntity.ok(new UserSummary(user)))
-//                .orElseThrow(() -> new EntityNotFoundException(username));
-//    }
 }
