@@ -4,7 +4,7 @@ import com.nazyli.chatappservices.dto.request.ChatMessageRequest;
 import com.nazyli.chatappservices.dto.response.NotificationResponse;
 import com.nazyli.chatappservices.entity.TransChatMessage;
 import com.nazyli.chatappservices.entity.MasterUser;
-import com.nazyli.chatappservices.repository.ChatMessageRepository;
+import com.nazyli.chatappservices.repository.TransChatMessageRepository;
 import com.nazyli.chatappservices.repository.MasterUserRepository;
 import com.nazyli.chatappservices.util.MessageStatus;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,14 +17,14 @@ import java.util.List;
 @Service
 public class ChatMessageService {
     @Autowired
-    ChatMessageRepository repository;
+    TransChatMessageRepository repository;
     @Autowired
     MasterUserRepository masterUserRepository;
     @Autowired
     ChatRoomService chatRoomService;
 
     public NotificationResponse save(ChatMessageRequest req) {
-        String chatRoomId = chatRoomService.getChatId(req.getSenderId(), req.getRecipientId(), true).orElse(null);
+        String chatRoomId = chatRoomService.getChatRoomId(req.getSenderId(), req.getRecipientId(), true).orElse(null);
 
         TransChatMessage transChatMessage = new TransChatMessage();
         transChatMessage.setRecipientId(req.getRecipientId());
@@ -47,9 +47,9 @@ public class ChatMessageService {
     }
 
     public List<TransChatMessage> findChatMessages(String senderId, String recipientId) {
-        String chatId = chatRoomService.getChatId(senderId, recipientId, false).orElse(null);
+        String chatRoomId = chatRoomService.getChatRoomId(senderId, recipientId, false).orElse(null);
 
-        List<TransChatMessage> messages = repository.findByChatRoomIdOrderByCreatedDateAsc(chatId);
+        List<TransChatMessage> messages = repository.findByChatRoomIdOrderByCreatedDateAsc(chatRoomId);
 
         if (messages.size() > 0) {
             updateStatuses(senderId, recipientId, MessageStatus.DELIVERED);

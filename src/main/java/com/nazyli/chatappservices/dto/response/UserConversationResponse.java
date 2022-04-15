@@ -6,17 +6,21 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Date;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class UserSummary {
+public class UserConversationResponse {
     private String userId;
     private String userName;
     private String email;
     private String pictureUrl;
+    private String newMessage;
+    private Date receivedDate;
 
-    public UserSummary(MasterUser user){
+    public UserConversationResponse(MasterUser user){
         this.userId = user.getUserId();
         this.userName = user.getUserName();
         this.email = user.getEmail();

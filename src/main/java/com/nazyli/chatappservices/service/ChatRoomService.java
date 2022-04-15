@@ -1,7 +1,7 @@
 package com.nazyli.chatappservices.service;
 
 import com.nazyli.chatappservices.entity.MasterChatRoom;
-import com.nazyli.chatappservices.repository.ChatRoomRepository;
+import com.nazyli.chatappservices.repository.MasterChatRoomRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,9 +12,9 @@ import java.util.UUID;
 @Service
 public class ChatRoomService {
     @Autowired
-    ChatRoomRepository repository;
+    MasterChatRoomRepository repository;
 
-    public Optional<String> getChatId(
+    public Optional<String> getChatRoomId(
             String senderId, String recipientId, boolean createRoom) {
 
         Optional<String> chatRoomId = repository.findBySenderIdAndRecipientId(senderId, recipientId).map(MasterChatRoom::getChatRoomId);
