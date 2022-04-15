@@ -1,14 +1,17 @@
 package com.nazyli.chatappservices.service;
 
-import com.nazyli.chatappservices.entity.ChatMessage;
+import com.nazyli.chatappservices.dto.request.ChatMessageRequest;
+import com.nazyli.chatappservices.dto.response.NotificationResponse;
+import com.nazyli.chatappservices.entity.TransChatMessage;
+import com.nazyli.chatappservices.entity.MasterUser;
 import com.nazyli.chatappservices.repository.ChatMessageRepository;
+import com.nazyli.chatappservices.repository.MasterUserRepository;
 import com.nazyli.chatappservices.util.MessageStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -16,12 +19,26 @@ public class ChatMessageService {
     @Autowired
     ChatMessageRepository repository;
     @Autowired
+    MasterUserRepository masterUserRepository;
+    @Autowired
     ChatRoomService chatRoomService;
 
-    public ChatMessage save(ChatMessage chatMessage) {
-        chatMessage.setStatus(MessageStatus.RECEIVED);
-        repository.save(chatMessage);
-        return chatMessage;
+    public NotificationResponse save(ChatMessageRequest req) {
+        String chatRoomId = chatRoomService.getChatId(req.getSenderId(), req.getRecipientId(), true).orElse(null);
+
+        TransChatMessage transChatMessage = new TransChatMessage();
+        transChatMessage.setRecipientId(req.getRecipientId());
+        transChatMessage.setSenderId(req.getSenderId());
+        transChatMessage.setContent(req.getContent());
+        transChatMessage.setChatRoomId(chatRoomId);
+        transChatMessage.setStatus(MessageStatus.RECEIVED);
+
+        transChatMessage = repository.save(transChatMessage);
+        MasterUser masterUser = masterUserRepository.findById(transChatMessage.getSenderId()).orElse(null);
+        return new NotificationResponse(
+                transChatMessage.getTransMessageId(),
+                transChatMessage.getSenderId(),
+                masterUser != null ? masterUser.getUserName() : null);
     }
 
     public long countNewMessages(String senderId, String recipientId) {
@@ -29,10 +46,10 @@ public class ChatMessageService {
                 senderId, recipientId, MessageStatus.RECEIVED);
     }
 
-    public List<ChatMessage> findChatMessages(String senderId, String recipientId) {
+    public List<TransChatMessage> findChatMessages(String senderId, String recipientId) {
         String chatId = chatRoomService.getChatId(senderId, recipientId, false).orElse(null);
 
-        List<ChatMessage> messages = repository.findByChatIdOrderByTimestampAsc(chatId);
+        List<TransChatMessage> messages = repository.findByChatRoomIdOrderByCreatedDateAsc(chatId);
 
         if (messages.size() > 0) {
             updateStatuses(senderId, recipientId, MessageStatus.DELIVERED);
@@ -41,7 +58,7 @@ public class ChatMessageService {
         return messages;
     }
 
-    public ChatMessage findById(String id) {
+    public TransChatMessage findById(String id) {
         return repository
                 .findById(id)
                 .map(chatMessage -> {
@@ -52,7 +69,7 @@ public class ChatMessageService {
     }
 
     public void updateStatuses(String senderId, String recipientId, MessageStatus status) {
-        for (ChatMessage cm : repository.findBySenderIdAndRecipientId(senderId, recipientId)) {
+        for (TransChatMessage cm : repository.findBySenderIdAndRecipientId(senderId, recipientId)) {
             cm.setStatus(status);
             repository.save(cm);
         }

@@ -12,13 +12,13 @@ import lombok.NoArgsConstructor;
 @Builder
 public class UserSummary {
     private String userId;
-    private String username;
+    private String userName;
     private String email;
     private String pictureUrl;
 
     public UserSummary(MasterUser user){
         this.userId = user.getUserId();
-        this.username = user.getUsername();
+        this.userName = user.getUserName();
         this.email = user.getEmail();
         this.pictureUrl = user.getPictureUrl();
     }

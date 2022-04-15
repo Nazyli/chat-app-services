@@ -47,7 +47,7 @@ public class MasterUserService {
     public MasterUser registerUser(UserRequest req) {
         log.info("registering user {}", req.getUsername());
 
-        if (masterUserRepository.existsByUsername(req.getUsername())) {
+        if (masterUserRepository.existsByUserName(req.getUsername())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "username " + req.getUsername() + " already exists");
         }
 
@@ -56,7 +56,7 @@ public class MasterUserService {
         }
 
         MasterUser user = new MasterUser();
-        user.setUsername(req.getUsername());
+        user.setUserName(req.getUsername());
         user.setEmail(req.getEmail());
         user.setPictureUrl(req.getPictureUrl());
         user.setActive(true);
@@ -71,6 +71,6 @@ public class MasterUserService {
     }
 
     public Optional<MasterUser> findByUsername(String username) {
-        return masterUserRepository.findByUsername(username);
+        return masterUserRepository.findByUserName(username);
     }
 }

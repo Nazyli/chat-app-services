@@ -20,7 +20,7 @@ public class MasterUser {
 
     public MasterUser(MasterUser user) {
         this.userId = user.userId;
-        this.username = user.username;
+        this.userName = user.userName;
         this.password = user.password;
         this.email = user.email;
         this.createdDate = user.getCreatedDate();
@@ -36,7 +36,7 @@ public class MasterUser {
     @GenericGenerator(name = "uuid", strategy = "uuid2")
     private String userId;
 
-    private String username;
+    private String userName;
 
     private String password;
 

@@ -15,10 +15,6 @@ public class MasterUserController {
     @Autowired
     private MasterUserService service;
 
-//    @GetMapping("/findAll")
-//    public ResponseEntity<?> getAll() {
-//        return ResponseEntity.ok(service.findAll());
-//    }
 
     @GetMapping("/summaries")
     public ResponseEntity<?> findAllUserSummaries(
@@ -26,7 +22,7 @@ public class MasterUserController {
         return ResponseEntity.ok(service
                 .findAll()
                 .stream()
-                .filter(user -> !user.getUsername().equals(userDetails.getUsername()))
+                .filter(user -> !user.getUserName().equals(userDetails.getUsername()))
                 .map(UserSummary::new));
     }
 
@@ -35,7 +31,7 @@ public class MasterUserController {
         return UserSummary
                 .builder()
                 .userId(userDetails.getUserId())
-                .username(userDetails.getUsername())
+                .userName(userDetails.getUsername())
                 .email(userDetails.getEmail())
                 .pictureUrl(userDetails.getPictureUrl())
                 .build();

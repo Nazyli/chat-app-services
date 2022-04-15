@@ -1,11 +1,13 @@
 package com.nazyli.chatappservices.service;
 
-import com.nazyli.chatappservices.entity.ChatRoom;
+import com.nazyli.chatappservices.entity.MasterChatRoom;
 import com.nazyli.chatappservices.repository.ChatRoomRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class ChatRoomService {
@@ -13,35 +15,36 @@ public class ChatRoomService {
     ChatRoomRepository repository;
 
     public Optional<String> getChatId(
-            String senderId, String recipientId, boolean createIfNotExist) {
+            String senderId, String recipientId, boolean createRoom) {
 
-        return repository
-                .findBySenderIdAndRecipientId(senderId, recipientId)
-                .map(ChatRoom::getChatId)
-                .or(() -> {
-                    if (!createIfNotExist) {
-                        return Optional.empty();
-                    }
-                    var chatId =
-                            String.format("%s_%s", senderId, recipientId);
+        Optional<String> chatRoomId = repository.findBySenderIdAndRecipientId(senderId, recipientId).map(MasterChatRoom::getChatRoomId);
+        if (chatRoomId.isEmpty()) {
+            if (createRoom) {
+                String newChatRoomId =
+                        String.format("%s_%s", UUID.randomUUID(), new Date().getTime());
 
-                    ChatRoom senderRecipient = ChatRoom
-                            .builder()
-                            .chatId(chatId)
-                            .senderId(senderId)
-                            .recipientId(recipientId)
-                            .build();
+                MasterChatRoom senderRecipient = MasterChatRoom
+                        .builder()
+                        .chatRoomId(newChatRoomId)
+                        .senderId(senderId)
+                        .recipientId(recipientId)
+                        .build();
 
-                    ChatRoom recipientSender = ChatRoom
-                            .builder()
-                            .chatId(chatId)
-                            .senderId(recipientId)
-                            .recipientId(senderId)
-                            .build();
-                    repository.save(senderRecipient);
-                    repository.save(recipientSender);
+                MasterChatRoom recipientSender = MasterChatRoom
+                        .builder()
+                        .chatRoomId(newChatRoomId)
+                        .senderId(recipientId)
+                        .recipientId(senderId)
+                        .build();
+                repository.save(senderRecipient);
+                repository.save(recipientSender);
 
-                    return Optional.of(chatId);
-                });
+                return Optional.of(newChatRoomId);
+            } else {
+                return Optional.empty();
+
+            }
+        }
+        return chatRoomId;
     }
 }
