@@ -1,6 +1,7 @@
 package com.nazyli.chatappservices.service;
 
 import com.nazyli.chatappservices.dto.request.ChatMessageRequest;
+import com.nazyli.chatappservices.dto.response.GroupDateMessageRes;
 import com.nazyli.chatappservices.dto.response.NotificationResponse;
 import com.nazyli.chatappservices.entity.TransChatMessage;
 import com.nazyli.chatappservices.entity.MasterUser;
@@ -8,10 +9,16 @@ import com.nazyli.chatappservices.repository.TransChatMessageRepository;
 import com.nazyli.chatappservices.repository.MasterUserRepository;
 import com.nazyli.chatappservices.util.MessageStatus;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -46,10 +53,14 @@ public class ChatMessageService {
                 senderId, recipientId, MessageStatus.RECEIVED);
     }
 
-    public List<TransChatMessage> findChatMessages(String senderId, String recipientId) {
+    public List<GroupDateMessageRes> findByChatRoomIdAndGroupByDate(String senderId, String recipientId) {
         String chatRoomId = chatRoomService.getChatRoomId(senderId, recipientId, false).orElse(null);
+        return repository.findByChatRoomIdAndGroupByDate(chatRoomId);
+    }
 
-        List<TransChatMessage> messages = repository.findByChatRoomIdOrderByCreatedDateAsc(chatRoomId);
+    public List<TransChatMessage> findChatMessages(String senderId, String recipientId, Date chatDate) {
+        String chatRoomId = chatRoomService.getChatRoomId(senderId, recipientId, false).orElse(null);
+        List<TransChatMessage> messages = repository.findByCreatedDateAndChatRoomIdOrderByCreatedDateAsc(chatDate, chatRoomId);
 
         if (messages.size() > 0) {
             updateStatuses(senderId, recipientId, MessageStatus.DELIVERED);
